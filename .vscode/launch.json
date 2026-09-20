@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "FIDAR",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/MainApplication/cmake-build-debug/FIDAR",
+            "cwd": "${workspaceFolder}/MainApplication",
+            "environment": [
+                {
+                    "name": "QT_QPA_PLATFORM",
+                    "value": "xcb"
+                }
+            ],
+            "preLaunchTask": "Build FIDAR",
+            "MIMode": "gdb"
+        },
+        {
+            "name": "Volt Engine",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/VoltEngine/cmake-build-debug/VoltEngine",
+            "cwd": "${workspaceFolder}/VoltEngine",
+                        "environment": [
+                {
+                    "name": "QT_QPA_PLATFORM",
+                    "value": "xcb"
+                }
+            ],
+            "preLaunchTask": "Build Volt Engine",
+            "MIMode": "gdb"
+        }
+    ]
+}

@@ -1,0 +1,31 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+            "label": "Build FIDAR",
+            "type": "shell",
+            "command": "cmake",
+			"args": [
+				"-S", "${workspaceFolder}/MainApplication",
+				"-B", "${workspaceFolder}/MainApplication/cmake-build-debug",
+				"&&",
+				"cmake",
+				"--build", "${workspaceFolder}/MainApplication/cmake-build-debug"
+			],
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Build Volt Engine",
+            "type": "shell",
+            "command": "cmake",
+			"args": [
+				"-S", "${workspaceFolder}/VoltEngine",
+				"-B", "${workspaceFolder}/VoltEngine/cmake-build-debug",
+				"&&",
+				"cmake",
+				"--build", "${workspaceFolder}/VoltEngine/cmake-build-debug"
+			],
+            "problemMatcher": ["$gcc"]
+        }
+	]
+}

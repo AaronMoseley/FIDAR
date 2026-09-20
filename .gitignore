@@ -10,3 +10,6 @@ build/
 onnxruntime.pdb
 ThirdPartyLibraries/Qt
 ThirdPartyLibraries/VulkanSDK
+*/cmake-build-debug/*
+*.o
+MainApplication/LASlib/*

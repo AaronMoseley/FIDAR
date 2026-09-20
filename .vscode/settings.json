@@ -1,0 +1,4 @@
+{
+    "cmake.sourceDirectory": "/home/AMoseley/PersonalStorage/Projects/VulkanProjects/RGBToPointCloud/MainApplication",
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/MainApplication/cmake-build-debug/compile_commands.json"
+}

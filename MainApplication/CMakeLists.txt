@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.21)
 
-project(PointCloudApp LANGUAGES CXX)
+project(FIDAR LANGUAGES CXX)
 
 # ---------------------------
 # C++ Standard
@@ -45,6 +45,8 @@ add_executable(${PROJECT_NAME}
     ${PROJECT_SOURCES}
     ${PROJECT_HEADERS}
 )
+
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # ---------------------------
 # Find Packages
@@ -165,22 +167,6 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE LASlib)
-
-# ---------------------------
-# Windows-specific settings
-# ---------------------------
-
-if (WIN32)
-    target_compile_definitions(${PROJECT_NAME} PRIVATE
-        NOMINMAX
-        WIN32_LEAN_AND_MEAN
-    )
-
-    target_compile_definitions(VoltEngine PRIVATE
-            NOMINMAX
-            WIN32_LEAN_AND_MEAN
-    )
-endif()
 
 # ---------------------------
 # Set startup project folder (Visual Studio)
