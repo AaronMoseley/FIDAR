@@ -6,6 +6,7 @@
 
 #include "Components/ImageSourceManager.h"
 #include "Components/SetupScene.h"
+#include "Components/DroneManager.h"
 #include "Management/VoltEngine.h"
 
 bool DebugFilter(QVulkanInstance::DebugMessageSeverityFlags severity, QVulkanInstance::DebugMessageTypeFlags type, const void* message)
@@ -57,6 +58,7 @@ int main(int argc, char* argv[]) {
     cameraObject->AddComponent<FirstPersonController>();
     cameraObject->AddComponent<SetupScene>();
     cameraObject->AddComponent<ImageSourceManager>();
+    cameraObject->AddComponent<DroneManager>();
     cameraObject->SetTag("Player");
     sceneManager->AddObject(cameraObject);
 

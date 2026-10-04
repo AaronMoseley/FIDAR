@@ -10,7 +10,8 @@
 				"-B", "${workspaceFolder}/MainApplication/cmake-build-debug",
 				"&&",
 				"cmake",
-				"--build", "${workspaceFolder}/MainApplication/cmake-build-debug"
+				"--build", "${workspaceFolder}/MainApplication/cmake-build-debug",
+				"--config", "Debug"
 			],
             "problemMatcher": ["$gcc"]
         },
@@ -23,7 +24,8 @@
 				"-B", "${workspaceFolder}/VoltEngine/cmake-build-debug",
 				"&&",
 				"cmake",
-				"--build", "${workspaceFolder}/VoltEngine/cmake-build-debug"
+				"--build", "${workspaceFolder}/VoltEngine/cmake-build-debug",
+				"--config", "Debug"
 			],
             "problemMatcher": ["$gcc"]
         }
