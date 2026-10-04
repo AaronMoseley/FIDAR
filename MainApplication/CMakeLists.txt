@@ -58,6 +58,9 @@ find_package(Vulkan REQUIRED)
 # Qt6 (change to Qt5 if needed)
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Widgets)
 
+# OpenCV
+find_package(OpenCV REQUIRED COMPONENTS core imgcodecs videoio)
+
 # GLM (header-only)
 target_include_directories(${PROJECT_NAME}
     PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdPartyLibraries/glm
@@ -105,6 +108,8 @@ target_include_directories(VoltEngine PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/../VoltEngine/source
 )
 
+target_include_directories(${PROJECT_NAME} PUBLIC ${OpenCV_INCLUDE_DIRS})
+
 target_link_libraries(VoltEngine
         PRIVATE
         Vulkan::Vulkan
@@ -121,28 +126,16 @@ target_compile_definitions(${PROJECT_NAME} PRIVATE
 # Onnx
 # ---------------------------
 
-if(WIN32)
-    set(ONNXRUNTIME_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdPartyLibraries/onnxruntime-win-x64-1.28.0")
+set(ONNXRUNTIME_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdPartyLibraries/onnxruntime-linux-x64-1.28.0")
 
-    add_library(onnxruntime SHARED IMPORTED)
+add_library(onnxruntime SHARED IMPORTED)
 
-    set_target_properties(onnxruntime PROPERTIES
-        IMPORTED_IMPLIB "${ONNXRUNTIME_ROOT}/lib/onnxruntime.lib"
-        IMPORTED_LOCATION "${ONNXRUNTIME_ROOT}/lib/onnxruntime.dll"
-        INTERFACE_INCLUDE_DIRECTORIES "${ONNXRUNTIME_ROOT}/include"
-    )
-else()
-    set(ONNXRUNTIME_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/../ThirdPartyLibraries/onnxruntime-linux-x64-1.28.0")
-
-    add_library(onnxruntime SHARED IMPORTED)
-
-    set_target_properties(onnxruntime PROPERTIES
-        IMPORTED_LOCATION
-        "${ONNXRUNTIME_ROOT}/lib/libonnxruntime.so"
-        INTERFACE_INCLUDE_DIRECTORIES
-        "${ONNXRUNTIME_ROOT}/include"
-    )
-endif()
+set_target_properties(onnxruntime PROPERTIES
+IMPORTED_LOCATION
+"${ONNXRUNTIME_ROOT}/lib/libonnxruntime.so"
+INTERFACE_INCLUDE_DIRECTORIES
+"${ONNXRUNTIME_ROOT}/include"
+)
 
 add_subdirectory(
         ${CMAKE_CURRENT_SOURCE_DIR}/../ThirdPartyLibraries/LAStools/LASlib/src
@@ -167,6 +160,8 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE LASlib)
+
+target_link_libraries(${PROJECT_NAME} PUBLIC ${OpenCV_LIBS})
 
 # ---------------------------
 # Set startup project folder (Visual Studio)

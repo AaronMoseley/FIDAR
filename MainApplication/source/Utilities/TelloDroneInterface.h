@@ -4,6 +4,7 @@
 #include <map>
 #include <string>
 #include <memory>
+#include "opencv2/opencv.hpp"
 
 #include "Utilities/SocketInterface.h"
 #include "glm.hpp"
