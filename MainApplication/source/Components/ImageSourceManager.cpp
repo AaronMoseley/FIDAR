@@ -197,8 +197,8 @@ void ImageSourceManager::AddCameraWithSettings(const std::filesystem::path& imag
 	ImageSourceSettingsDialog::ImageSourceSettingsData imageSourceData;
 	imageSourceData.m_cameraObjectHandle = cameraHandle;
 	imageSourceData.m_cameraName = imagePath.stem();
-	imageSourceData.m_horizontalFOV = 90.0f;
-	imageSourceData.m_verticalFOV = 90.0f;
+	imageSourceData.m_horizontalFOV = 70.0f;
+	imageSourceData.m_verticalFOV = 43.0f;
 	imageSourceData.m_imageGlobalScale = 1.0f;
 	imageSourceData.m_imageSetting = ImageSourceSettingsDialog::ImageSetting::Indoor;
 	imageSourceData.m_imageSourcePath = imagePath;

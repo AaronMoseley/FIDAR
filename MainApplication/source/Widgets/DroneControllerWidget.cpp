@@ -159,7 +159,7 @@ void DroneControllerWidget::SetupUI()
     mainLayout->addWidget(landButton);
 
     m_imageLabel = new QLabel();
-    mainLayout->addWidget(m_imageLabel);
+    mainLayout->addWidget(m_imageLabel, 0, Qt::AlignHCenter);
 }
 
 void DroneControllerWidget::UpdateTransformLabels()
