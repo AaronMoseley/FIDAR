@@ -178,6 +178,38 @@ void ImageSourceManager::TriggerExportLAS(std::string filePath)
 	exportThread.detach();
 }
 
+void ImageSourceManager::AddCameraWithSettings(const std::filesystem::path& imagePath, const glm::vec3& position, const glm::vec3& rotation)
+{
+	std::shared_ptr<RenderObject> newCameraModel = std::make_shared<RenderObject>();
+	newCameraModel->SetMaterialName("GenericObjectMaterial");
+	std::shared_ptr<Transform> gltfModelTransform = newCameraModel->AddComponent<Transform>();
+	std::shared_ptr<GLTFModel> gltfMesh = newCameraModel->AddComponent<GLTFModel>();
+	gltfMesh->SetLit(false);
+	gltfModelTransform->SetRotationQuaternion(rotation);
+	gltfModelTransform->SetPosition(position);
+	gltfModelTransform->SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+
+	gltfMesh->SetSourcePath("models/Camera/CameraModel.gltf");
+	gltfMesh->ReverseWindingOrder();
+
+	VulkanCommonFunctions::ObjectHandle cameraHandle = GetScene()->AddObject(newCameraModel);
+
+	ImageSourceSettingsDialog::ImageSourceSettingsData imageSourceData;
+	imageSourceData.m_cameraObjectHandle = cameraHandle;
+	imageSourceData.m_cameraName = imagePath.stem();
+	imageSourceData.m_horizontalFOV = 90.0f;
+	imageSourceData.m_verticalFOV = 90.0f;
+	imageSourceData.m_imageGlobalScale = 1.0f;
+	imageSourceData.m_imageSetting = ImageSourceSettingsDialog::ImageSetting::Indoor;
+	imageSourceData.m_imageSourcePath = imagePath;
+	imageSourceData.m_imageType = ImageSourceSettingsDialog::ImageType::Perspective;
+	imageSourceData.m_position = position;
+	imageSourceData.m_rotation = rotation;
+
+	m_imageSourceManagementWidget->AddImageSource(imageSourceData);
+	m_imageSettingsData[cameraHandle] = imageSourceData;
+}
+
 void ImageSourceManager::AddCamera()
 {
 	std::shared_ptr<Transform> currentTransform = GetOwner()->GetComponent<Transform>();

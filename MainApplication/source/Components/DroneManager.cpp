@@ -46,7 +46,8 @@ void DroneManager::ActivateDroneController(const glm::vec3& position, float rota
     std::function<void()> closedCallback = std::bind(&DroneManager::DroneControllerClosedCallback, this);
     m_currentControllerWidget->SetClosedCallback(closedCallback);
 
-    std::function<void()> addCameraCallback = std::bind(&DroneManager::AddCameraFromDrone, this);
+    std::function<void(const std::filesystem::path&, const glm::vec3&, const glm::vec3&)> addCameraCallback = 
+        std::bind(&DroneManager::AddCameraFromDrone, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
     m_currentControllerWidget->SetAddCameraCallback(addCameraCallback);
 
     m_currentControllerWidget->exec();
@@ -58,15 +59,10 @@ void DroneManager::DroneControllerClosedCallback()
     m_currentControllerWidget = nullptr;
 }
 
-void DroneManager::AddCameraFromDrone()
+void DroneManager::AddCameraFromDrone(const std::filesystem::path& imagePath, const glm::vec3& position, const glm::vec3& rotation)
 {
-    m_currentControllerWidget->GetCurrentDroneImage();
-
-    //save image somewhere
-
     std::shared_ptr<ImageSourceManager> imageSourceManager = GetOwner()->GetComponent<ImageSourceManager>();
-
-    //add camera with drone position, rotation, and image source
+    imageSourceManager->AddCameraWithSettings(imagePath, position, rotation);
 }
 
 void DroneManager::LandDrone()

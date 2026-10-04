@@ -31,6 +31,8 @@ public:
 	void TriggerImageSourceEditing(VulkanCommonFunctions::ObjectHandle cameraObjectHandle);
 	void TriggerImageSourceRemoval(VulkanCommonFunctions::ObjectHandle cameraObjectHandle);
 
+	void AddCameraWithSettings(const std::filesystem::path& imagePath, const glm::vec3& position, const glm::vec3& rotation);
+
 private:
 	const std::filesystem::path kMLModelPathIndoor = "ml_models/IndoorModel.onnx";
 	const std::filesystem::path kMLModelPathOutdoor = "ml_models/OutdoorModel_KITTI.onnx";

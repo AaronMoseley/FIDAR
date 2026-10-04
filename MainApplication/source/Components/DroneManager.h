@@ -18,7 +18,7 @@ private:
     void ActivateDroneInitialization();
     void ActivateDroneController(const glm::vec3& position, float rotation, const std::string& ipAddress);
     void DroneControllerClosedCallback();
-    void AddCameraFromDrone();
+    void AddCameraFromDrone(const std::filesystem::path& imagePath, const glm::vec3& position, const glm::vec3& rotation);
     void LandDrone();
 
     DroneControllerWidget* m_currentControllerWidget = nullptr;

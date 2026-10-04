@@ -5,6 +5,9 @@
 #include <string>
 #include <memory>
 #include "opencv2/opencv.hpp"
+#include <filesystem>
+#include <atomic>
+#include <thread>
 
 #include "Utilities/SocketInterface.h"
 #include "glm.hpp"
@@ -40,7 +43,8 @@ public:
     bool MoveDrone(MovementType movementType);
     void LandDrone();
 
-    void GetCurrentDroneImage();
+    std::filesystem::path GetCurrentDroneImage();
+    void GetCurrentDroneImage(cv::Mat& outImage);
 
 private:
     static constexpr uint16_t kTelloPort = 8889;
@@ -48,6 +52,12 @@ private:
     static constexpr uint32_t kVerticalMovementCM = 20;
     static constexpr uint32_t kRotationAmountDegrees = 10;
     static constexpr float kRotationAmountRadians = glm::radians(static_cast<float>(kRotationAmountDegrees));
+    const std::filesystem::path kDroneCaptureDirectory = "drone_captures";
+    const std::string kBaseCaptureFileName = "capture_";
+
+    void FrameLoadThread();
+
+    std::atomic<bool> m_threadsRunning = true;
 
     inline static const std::map<MovementType, std::string> kMovementTypeToCommand = 
     {
@@ -65,6 +75,12 @@ private:
     float m_currentDroneRotation = 0.0f;
 
     std::shared_ptr<SocketInterface> m_socketInterface;
+
+    std::shared_ptr<cv::VideoCapture> m_videoFeed;
+    std::mutex m_latestFrameMutex;
+    cv::Mat m_lastFrame;
+    std::thread m_loadFrameThread;
+    size_t m_requestedFrameCount = 0;
 };
 
 #endif

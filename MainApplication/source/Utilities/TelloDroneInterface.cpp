@@ -29,6 +29,16 @@ bool TelloDroneInterface::TakeoffDrone()
         return false;
     }
 
+    setenv("OPENCV_FFMPEG_CAPTURE_OPTIONS", "fflags;nobuffer|flags;low_delay", 1);
+    m_videoFeed = std::make_shared<cv::VideoCapture>("udp://0.0.0.0:11111", cv::CAP_FFMPEG);
+    result &= m_videoFeed->isOpened();
+
+    if(result)
+    {
+        m_loadFrameThread = std::thread(&TelloDroneInterface::FrameLoadThread, this);
+        std::filesystem::create_directory(kDroneCaptureDirectory);
+    }
+
     return result;
 }
 
@@ -98,11 +108,60 @@ bool TelloDroneInterface::MoveDrone(MovementType movementType)
 void TelloDroneInterface::LandDrone()
 {
     std::string response = "";
+
+    m_threadsRunning = false;
+    m_loadFrameThread.join();
+
     m_socketInterface->SendCommand("streamoff", response);
     m_socketInterface->SendCommand("land", response);
 }
 
-void TelloDroneInterface::GetCurrentDroneImage()
+void TelloDroneInterface::FrameLoadThread()
 {
+    cv::Mat currentFrame;
+    while(m_threadsRunning)
+    {
+        if(m_videoFeed->isOpened() == false)
+        {
+            m_threadsRunning = false;
+            break;
+        }
 
+        try
+        {
+            if (!m_videoFeed->read(currentFrame) || currentFrame.empty()) 
+            {
+                std::this_thread::sleep_for(std::chrono::milliseconds(5));
+                continue;
+            }
+
+            {
+                std::lock_guard<std::mutex> lock(m_latestFrameMutex);
+                currentFrame.copyTo(m_lastFrame);
+            }
+        } catch(const std::exception& e)
+        {
+            m_threadsRunning = false;
+            return;
+        }
+    }
+}
+
+void TelloDroneInterface::GetCurrentDroneImage(cv::Mat& outImage)
+{
+    std::lock_guard<std::mutex> lock(m_latestFrameMutex);
+    m_lastFrame.copyTo(outImage);
+}
+
+std::filesystem::path TelloDroneInterface::GetCurrentDroneImage()
+{
+    std::lock_guard<std::mutex> lock(m_latestFrameMutex);
+
+    std::string fileName = kBaseCaptureFileName + std::to_string(m_requestedFrameCount) + ".png";
+    std::filesystem::path imagePath = kDroneCaptureDirectory / fileName;
+    cv::imwrite(imagePath, m_lastFrame);
+
+    m_requestedFrameCount++;
+
+    return imagePath;
 }

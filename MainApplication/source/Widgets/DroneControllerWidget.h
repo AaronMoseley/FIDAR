@@ -10,6 +10,9 @@
 #include <QMessageBox>
 #include <QShowEvent>
 
+#include <thread>
+#include <atomic>
+
 #include "Utilities/TelloDroneInterface.h"
 
 class DroneControllerWidget : public QDialog
@@ -31,12 +34,12 @@ public:
     DroneControllerWidget(const glm::vec3& position, float rotation, const std::string& ipAddress);
 
     void MoveDrone(TelloDroneInterface::MovementType movementType);
-    void GetCurrentDroneImage();
 
     void LandDrone();
 
     void SetClosedCallback(std::function<void()> closedCallback) { m_closedCallback = closedCallback; };
-    void SetAddCameraCallback(std::function<void()> addCameraCallback) { m_addCameraCallback = addCameraCallback; };
+    void SetAddCameraCallback(std::function<void(const std::filesystem::path&, const glm::vec3&, const glm::vec3&)> addCameraCallback) 
+        { m_addCameraCallback = addCameraCallback; };
 
     bool IsConnectionSuccessful() { return m_connectionSuccessful; }
 
@@ -47,22 +50,31 @@ protected:
 
 private:
     const std::string kHelpText = "WASD to move horizontally, Shift + Ctrl to move vertically, Q + E to rotate, F to take a picture";
+    static constexpr float kBaseDroneXRotation = 0.0f;
+    static constexpr float kBaseDroneZRotation = 0.0f;
 
     void UpdateTransformLabels();
-
     void SetupUI();
+    void UpdateUIImageThread();
+    QImage MatToQImage(const cv::Mat& mat);
+
+    const QSize kImageSize = { 300, 200 };
 
     std::shared_ptr<TelloDroneInterface> m_droneInterface = nullptr;
 
     std::function<void()> m_closedCallback;
-    std::function<void()> m_addCameraCallback;
+    std::function<void(const std::filesystem::path&, const glm::vec3&, const glm::vec3&)> m_addCameraCallback;
 
     QLabel* m_xLabel;
     QLabel* m_yLabel;
     QLabel* m_zLabel;
     QLabel* m_rotationLabel;
+    QLabel* m_imageLabel;
 
     bool m_connectionSuccessful = false;
+
+    std::thread m_updateImageThread;
+    std::atomic<bool> m_threadsRunning = true;
 };
 
 #endif

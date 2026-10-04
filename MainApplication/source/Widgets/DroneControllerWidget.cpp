@@ -19,6 +19,10 @@ DroneControllerWidget::DroneControllerWidget(const glm::vec3& position, float ro
             "Error",
             "Could not connect to Tello drone. Please try reconnecting."
         );
+    } else 
+    {
+        m_updateImageThread = std::thread(&DroneControllerWidget::UpdateUIImageThread, this);
+        m_updateImageThread.detach();
     }
 }
 
@@ -45,7 +49,11 @@ void DroneControllerWidget::keyPressEvent(QKeyEvent* event)
 
     if(key == Qt::Key::Key_F && m_addCameraCallback)
     {
-        m_addCameraCallback();
+        std::filesystem::path imagePath = m_droneInterface->GetCurrentDroneImage();
+        glm::vec3 position;
+        m_droneInterface->GetDronePosition(position);
+        glm::vec3 rotation = {kBaseDroneXRotation, m_droneInterface->GetDroneRotation(), kBaseDroneZRotation};
+        m_addCameraCallback(imagePath, position, rotation);
     }
 
     if(key == Qt::Key::Key_Escape)
@@ -63,18 +71,11 @@ void DroneControllerWidget::showEvent(QShowEvent *event)
     }
 }
 
-void DroneControllerWidget::GetCurrentDroneImage()
-{
-    if(m_droneInterface == nullptr)
-    {
-        return;
-    }
-
-    m_droneInterface->GetCurrentDroneImage();
-}
-
 void DroneControllerWidget::LandDrone()
 {
+    setVisible(false);
+    close();
+
     if(m_droneInterface == nullptr)
     {
         return;
@@ -82,9 +83,47 @@ void DroneControllerWidget::LandDrone()
 
     m_droneInterface->LandDrone();
     m_droneInterface = nullptr;
+}
 
-    setVisible(false);
-    close();
+QImage DroneControllerWidget::MatToQImage(const cv::Mat& inputImage) 
+{
+    switch (inputImage.type()) {
+    case CV_8UC3:
+        return QImage(inputImage.data, inputImage.cols, inputImage.rows, static_cast<qsizetype>(inputImage.step),
+                      QImage::Format_BGR888).copy();
+    case CV_8UC4:
+        return QImage(inputImage.data, inputImage.cols, inputImage.rows, static_cast<qsizetype>(inputImage.step),
+                      QImage::Format_ARGB32).copy();
+    case CV_8UC1:
+        return QImage(inputImage.data, inputImage.cols, inputImage.rows, static_cast<qsizetype>(inputImage.step),
+                      QImage::Format_Grayscale8).copy();
+    default:
+        return {};
+    }
+}
+
+void DroneControllerWidget::UpdateUIImageThread()
+{
+    while(m_threadsRunning)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        if(m_droneInterface == nullptr)
+        {
+            m_threadsRunning = false;
+            return;
+        }
+
+        cv::Mat currentFrame;
+        m_droneInterface->GetCurrentDroneImage(currentFrame);
+
+        QImage currentFrameImage = MatToQImage(currentFrame);
+
+        QPixmap pixmap = QPixmap::fromImage(currentFrameImage).scaled(
+            kImageSize, Qt::KeepAspectRatio, Qt::FastTransformation
+        );
+        m_imageLabel->setPixmap(pixmap);
+    }
 }
 
 void DroneControllerWidget::SetupUI()
@@ -118,6 +157,9 @@ void DroneControllerWidget::SetupUI()
     QPushButton* landButton = new QPushButton("Land Drone");
     connect(landButton, &QPushButton::pressed, this, &DroneControllerWidget::close);
     mainLayout->addWidget(landButton);
+
+    m_imageLabel = new QLabel();
+    mainLayout->addWidget(m_imageLabel);
 }
 
 void DroneControllerWidget::UpdateTransformLabels()
@@ -143,4 +185,6 @@ void DroneControllerWidget::closeEvent(QCloseEvent *event)
     {
         m_closedCallback();
     }
+
+    m_threadsRunning = false;
 }
