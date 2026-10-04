@@ -29,8 +29,6 @@ void DroneControllerWidget::MoveDrone(TelloDroneInterface::MovementType movement
         return;
     }
 
-    qDebug() << "Moving drone: " << movementType;
-
     m_droneInterface->MoveDrone(movementType);
     UpdateTransformLabels();
 }
@@ -38,8 +36,6 @@ void DroneControllerWidget::MoveDrone(TelloDroneInterface::MovementType movement
 void DroneControllerWidget::keyPressEvent(QKeyEvent* event)
 {
     Qt::Key key = static_cast<Qt::Key>(event->key());
-
-    qDebug() << "Key pressed: " << key;
 
     if(kMovementMap.contains(key))
     {
@@ -83,8 +79,6 @@ void DroneControllerWidget::LandDrone()
     {
         return;
     }
-
-    qDebug() << "Landing drone";
 
     m_droneInterface->LandDrone();
     m_droneInterface = nullptr;

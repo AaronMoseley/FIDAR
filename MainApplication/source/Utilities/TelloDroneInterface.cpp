@@ -1,6 +1,4 @@
 #include "TelloDroneInterface.h"
-#include <qlogging.h>
-#include <QDebug>
 
 TelloDroneInterface::TelloDroneInterface(const std::string& ipAddress)
 {
