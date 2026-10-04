@@ -2,30 +2,56 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-            "label": "Build FIDAR",
+            "label": "Build FIDAR Debug",
             "type": "shell",
             "command": "cmake",
 			"args": [
+				"-DCMAKE_BUILD_TYPE=Debug",
 				"-S", "${workspaceFolder}/MainApplication",
 				"-B", "${workspaceFolder}/MainApplication/cmake-build-debug",
 				"&&",
 				"cmake",
-				"--build", "${workspaceFolder}/MainApplication/cmake-build-debug",
-				"--config", "Debug"
+				"--build", "${workspaceFolder}/MainApplication/cmake-build-debug"
 			],
             "problemMatcher": ["$gcc"]
         },
         {
-            "label": "Build Volt Engine",
+            "label": "Build Volt Engine Debug",
             "type": "shell",
             "command": "cmake",
 			"args": [
+				"-DCMAKE_BUILD_TYPE=Debug",
 				"-S", "${workspaceFolder}/VoltEngine",
 				"-B", "${workspaceFolder}/VoltEngine/cmake-build-debug",
 				"&&",
 				"cmake",
-				"--build", "${workspaceFolder}/VoltEngine/cmake-build-debug",
-				"--config", "Debug"
+				"--build", "${workspaceFolder}/VoltEngine/cmake-build-debug"
+			],
+            "problemMatcher": ["$gcc"]
+        },
+		{
+            "label": "Build FIDAR Release",
+            "type": "shell",
+            "command": "cmake",
+			"args": [
+				"-S", "${workspaceFolder}/MainApplication",
+				"-B", "${workspaceFolder}/MainApplication/cmake-build-release",
+				"&&",
+				"cmake",
+				"--build", "${workspaceFolder}/MainApplication/cmake-build-release"
+			],
+            "problemMatcher": ["$gcc"]
+        },
+        {
+            "label": "Build Volt Engine Release",
+            "type": "shell",
+            "command": "cmake",
+			"args": [
+				"-S", "${workspaceFolder}/VoltEngine",
+				"-B", "${workspaceFolder}/VoltEngine/cmake-build-release",
+				"&&",
+				"cmake",
+				"--build", "${workspaceFolder}/VoltEngine/cmake-build-release"
 			],
             "problemMatcher": ["$gcc"]
         }

@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "FIDAR",
+            "name": "FIDAR Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/MainApplication/cmake-build-debug/FIDAR",
@@ -16,11 +16,11 @@
                     "value": "xcb"
                 }
             ],
-            "preLaunchTask": "Build FIDAR",
+            "preLaunchTask": "Build FIDAR Debug",
             "MIMode": "gdb"
         },
         {
-            "name": "Volt Engine",
+            "name": "Volt Engine Debug",
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/VoltEngine/cmake-build-debug/VoltEngine",
@@ -31,7 +31,37 @@
                     "value": "xcb"
                 }
             ],
-            "preLaunchTask": "Build Volt Engine",
+            "preLaunchTask": "Build Volt Engine Debug",
+            "MIMode": "gdb"
+        },
+        {
+            "name": "FIDAR Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/MainApplication/cmake-build-release/FIDAR",
+            "cwd": "${workspaceFolder}/MainApplication",
+            "environment": [
+                {
+                    "name": "QT_QPA_PLATFORM",
+                    "value": "xcb"
+                }
+            ],
+            "preLaunchTask": "Build FIDAR Release",
+            "MIMode": "gdb"
+        },
+        {
+            "name": "Volt Engine Release",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/VoltEngine/cmake-build-release/VoltEngine",
+            "cwd": "${workspaceFolder}/VoltEngine",
+                        "environment": [
+                {
+                    "name": "QT_QPA_PLATFORM",
+                    "value": "xcb"
+                }
+            ],
+            "preLaunchTask": "Build Volt Engine Release",
             "MIMode": "gdb"
         }
     ]
